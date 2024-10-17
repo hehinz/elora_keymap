@@ -59,7 +59,12 @@ enum layers {
 #define ALT_L       MT(MOD_LALT, KC_L)
 #define GUI_SCLN    MT(MOD_RGUI, KC_SCLN)
 
-
+#define MEH_G       MEH(KC_G)
+#define MEH_B       MEH(KC_B)
+#define MEH_V       MEH(KC_V)
+#define MEH_C       MEH(KC_C)
+#define MEH_X       MEH(KC_X)
+#define MEH_Z       MEH(KC_Z)
 
 // Note: LAlt/Enter (ALT_ENT) is not the same thing as the keyboard shortcut Alt+Enter.
 // The notation `mod/tap` denotes a key that activates the modifier `mod` when held down, and
