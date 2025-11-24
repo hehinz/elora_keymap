@@ -15,49 +15,63 @@
  */
 
 #include <stdint.h>
-#include "features/achordion.h"
 #include QMK_KEYBOARD_H
 
 enum layers {
     _QWERTY = 0,
-    _QWERTY_STATIC,
+    _GAME,
+    _GALLIUM,
+    _TYPING,
     _NAV,
     _SYM,
     _NUM,
     _FUNCTION,
-    _SYMR,
     _ADJUST,
 };
 
 // Aliases for readability
 #define BASE     DF(_QWERTY)
-#define GAME     DF(_QWERTY_STATIC)
+#define GAME     DF(_GAME)
+#define GALL     DF(_GALLIUM)
+#define TYPI     DF(_TYPING)
 
 // COLEMAK_DH only as a temporary switch
 
 #define SYM      MO(_SYM)
-#define SYMR     MO(_SYMR)
 #define NAV      MO(_NAV)
 #define FKEYS    MO(_FUNCTION)
 #define NUM      MO(_NUM)
 #define ADJUST   MO(_ADJUST)
 
-#define NAV_ESC     LT(NAV, KC_ESC)
-#define NUM_TAB     LT(NUM, KC_TAB)
-#define NAV_BSPC    LT(NAV, KC_BSPC)
+#define NAV_TAB     LT(NAV, KC_TAB)
 #define SYM_SPC     LT(SYM, KC_SPC)
-#define FKEYS_ENT   LT(FKEYS, KC_ENT)
+#define NUM_ESC     LT(NUM, KC_ESC)
+
+#define FUN_ENT     LT(FKEYS, KC_ENT)
+#define SYM_BSPC    LT(SYM, KC_BSPC)
+#define NAV_DEL     LT(NAV, KC_DEL)
 
 // home row mods
-#define GUI_A       MT(MOD_LGUI, KC_A)
-#define ALT_S       MT(MOD_LALT, KC_S)
-#define SHFT_D      MT(MOD_LSFT, KC_D)
-#define CTL_F       MT(MOD_LCTL, KC_F)
+#define LCTL_MINS   MT(MOD_LCTL, KC_MINS)
+#define LGUI_A      MT(MOD_LGUI, KC_A)
+#define LALT_S      MT(MOD_LALT, KC_S)
+#define LSFT_D      MT(MOD_LSFT, KC_D)
+#define LCTL_F      MT(MOD_LCTL, KC_F)
 
-#define CTL_J       MT(MOD_RCTL, KC_J)
-#define SHFT_K      MT(MOD_RSFT, KC_K)
-#define ALT_L       MT(MOD_LALT, KC_L)
-#define GUI_SCLN    MT(MOD_RGUI, KC_SCLN)
+#define RCTL_J      MT(MOD_RCTL, KC_J)
+#define RSFT_K      MT(MOD_RSFT, KC_K)
+#define LALT_L      MT(MOD_LALT, KC_L)
+#define RGUI_QUOT   MT(MOD_RGUI, KC_QUOT)
+
+#define LGUI_N      MT(MOD_LGUI, KC_N)
+#define LALT_R      MT(MOD_LALT, KC_R)
+#define LSFT__T       MT(MOD_LSFT, KC_T)
+#define LCTL_S      MT(MOD_LCTL, KC_S)
+
+#define RCTL_H      MT(MOD_RCTL, KC_H)
+#define RSFT_A      MT(MOD_RSFT, KC_A)
+#define LALT_E      MT(MOD_LALT, KC_E)
+#define RGUI_I      MT(MOD_RGUI, KC_I)
 
 #define MEH_G       MEH(KC_G)
 #define MEH_B       MEH(KC_B)
@@ -65,6 +79,12 @@ enum layers {
 #define MEH_C       MEH(KC_C)
 #define MEH_X       MEH(KC_X)
 #define MEH_Z       MEH(KC_Z)
+
+
+enum custom_keycodes {
+    ASSIGN = SAFE_RANGE,
+    UPDIR,
+};
 
 // Note: LAlt/Enter (ALT_ENT) is not the same thing as the keyboard shortcut Alt+Enter.
 // The notation `mod/tap` denotes a key that activates the modifier `mod` when held down, and
@@ -74,8 +94,12 @@ enum layers {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] =
 #include "layers/lay_qwerty_main.inl"
-    [_QWERTY_STATIC] =
-#include "layers/lay_qwerty_static.inl"
+    [_GAME] =
+#include "layers/lay_game.inl"
+    [_GALLIUM] =
+#include "layers/lay_gallium.inl"
+    [_TYPING] =
+#include "layers/lay_typing.inl"
     [_NAV] =
 #include "layers/lay_nav.inl"
     [_SYM] =
@@ -86,8 +110,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #include "layers/lay_fun.inl"
     [_ADJUST] =
 #include "layers/lay_adjust.inl"
-    [_SYMR] =
-#include "layers/lay_template.inl"
 };
 
 /* The default OLED and rotary encoder code can be found at the bottom of qmk_firmware/keyboards/splitkb/elora/rev1/rev1.c
@@ -118,125 +140,104 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [0] = {
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+#include "layers/encoders.inl"
     },
     [1] = {
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+#include "layers/encoders.inl"
     },
     [2] = {
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+#include "layers/encoders.inl"
     },
     [3] = {
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+#include "layers/encoders.inl"
     },
     [4] = {
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+#include "layers/encoders.inl"
     },
     [5] = {
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+#include "layers/encoders.inl"
     },
     [6] = {
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+#include "layers/encoders.inl"
     },
     [7] = {
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_PGUP, KC_PGDN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+#include "layers/encoders.inl"
+    },
+    [8] = {
+#include "layers/encoders.inl"
     }
 };
 #endif
 
 
+const key_override_t dot_key_override =
+    ko_make_with_layers(MOD_MASK_SHIFT, KC_DOT, KC_AT, 0x1);  // Shift . is ?
+const key_override_t comm_key_override =
+    ko_make_with_layers(MOD_MASK_SHIFT, KC_COMM, KC_EXLM, 0x1); // Shift , is !
+
+const key_override_t *key_overrides[] = {
+    &dot_key_override,
+    &comm_key_override,
+};
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case SYM_SPC:
-        case NUM_TAB:
-        case FKEYS_ENT:
-        case NAV_ESC:
-        case NAV_BSPC:
+        case LGUI_A:
+        case LALT_S:
+        case LCTL_F:
+        case RCTL_J:
+        case LALT_L:
+        case RGUI_QUOT:
 
-        case GUI_A:
-        case ALT_S:
-        case SHFT_D:
-        case CTL_F:
-        case CTL_J:
-        case SHFT_K:
-        case ALT_L:
-        case GUI_SCLN:
-
+        case LGUI_N:
+        case LALT_R:
+        case LCTL_S:
+        case RCTL_H:
+        case LALT_E:
+        case RGUI_I:
         return QUICK_TAP_TERM;
+
+        case LSFT_D:
+        case RSFT_K:
+        case LSFT__T:
+        case RSFT_A:
+        return 100;
         default:
         return 0;
     }
 }
 
-void matrix_scan_user(void) {
-    achordion_task();
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case ASSIGN:
+            if (record->event.pressed) {
+                SEND_STRING(" = ");
+            }
+            return false;
+        case UPDIR:
+            if (record->event.pressed) {
+                SEND_STRING("../");
+            }
+            return false;
+    }
+
+    return true;
 }
 
-bool achordion_chord(uint16_t tap_hold_keycode,
+bool get_chordal_hold(uint16_t tap_hold_keycode,
                      keyrecord_t* tap_hold_record,
                      uint16_t other_keycode,
                      keyrecord_t* other_record) {
 
 
     switch (tap_hold_keycode) {
-        case CTL_F:
+        case LGUI_A:
+        if (other_keycode == KC_TAB) {return true; }
+        break;
+
+        case LCTL_F:
+        case LCTL_S:
         if (other_keycode == KC_TAB
             || other_keycode == KC_SPC
             || other_keycode == KC_LALT
@@ -246,23 +247,20 @@ bool achordion_chord(uint16_t tap_hold_keycode,
             || other_keycode == KC_C) { return true; }
         break;
 
+        case LCTL_MINS:
+
+        case NAV_TAB:
         case SYM_SPC:
-        case NUM_TAB:
-        case FKEYS_ENT:
-        case NAV_ESC:
-        case NAV_BSPC:
+        case NUM_ESC:
+
+        case FUN_ENT:
+        case SYM_BSPC:
+        case NAV_DEL:
 
         return true;
     }
 
-    return achordion_opposite_hands(tap_hold_record, other_record);
+    return get_chordal_hold_default(tap_hold_record, other_record);
 }
 
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_achordion(keycode, record)) { return false; }
-
-    // Macros....
-    return true;
-}
 
